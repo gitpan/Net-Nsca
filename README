@@ -1,0 +1,79 @@
+$Id: README,v 1.3 2001/12/14 01:42:03 piers Exp $
+
+Installation:
+
+This is a pure-perl module. It requires nothing that
+isn't part of the standard perl distribution (as far as I know)
+as it only relies on IO::Socket. Do the usual
+perl Makefile.PL
+make
+make test
+make install
+
+Or just copy the lib/Net/Nsca.pm file to wherever you want.
+
+
+Note: The external command file used by netsaint should have
+the right permissions (if you're using the local_message method)
+You may have to set your umask or do other things to ensure that
+NetSaint can alter the file.
+
+
+The utility send_nsca.pl is included as a proof-of-concept. It does
+basically what the C utility send_nsca does, but in perl. It allows
+you to ensure that Net::Nsca actually does what it should.
+
+Assuming you have a passive check like this in your hosts.cfg file:
+service[dev.selsyn]=NSCATest;1;pasv;1;5;1;all-admins;500;24x7;1;1;1;;check_ping
+
+then you can submit a passive check like
+echo 'dev.selsyn,NSCATest,2,TestNetCrit2' | ./send_nsca.pl -d ',' -x -p 5667 localhost
+or
+echo 'dev.selsyn,NSCATest,0,All Clear' | ./send_nsca.pl -d ',' -x -l
+
+The Module:
+
+v1.6 - 14th December 2001 - First public release
+
+This is the POD, which says pretty much all that needs to be said:
+
+NAME
+    Net::Nsca - a perl way to send status checks to NetSaint, locally
+    and remotely
+
+DESCRIPTION
+    This module provides a simple API to allow perl programs to send
+    checks to the Netsaint server that is monitoring them. This server
+    may be local or remote. The API has two main methods and one utility
+    method:
+
+    Net::Nsca::local_message($message [, $log_file]);
+        Pass in a hashref with the message fields in it - the keys are
+        host_name, svc_description, return_code, plugin_output - and
+        optionally the name of the file to append the status check
+        message to (the default is /usr/local/netsaint/rw/netsaint.cmd
+        if you don't supply one)
+        Dies if anything goes wrong.
+
+    Net::Nsca::send_message($message, $remote_host [, $config_file [, $remote_port ]]);
+        Pass in a hashref with the message fields in it - the keys are
+        host_name, svc_description, return_code, plugin_output - the
+        name or address of the Netsaint host, the port number (defaults
+        to 5667), and the config file to be read - defaults to
+        /usr/local/netsaint/etc/send_nsca.cfg
+        Dies if there's a problem.
+
+    ($password, $encryption_method) = Net::Nsca::read_config($configfile)
+        You probably won't need to use this, but it's available anyway.
+        Reads in a config file, probably called send_nsca.cfg, and
+        returns the password and encryption method. Dies if it can't
+        find them.
+
+COPYRIGHT
+    See the LICENSE file. Parts are based on work by Ethan Galstad, the
+    rest is mine.
+
+PERL IMPLEMENTATION
+    P Kent, Started Nov 2001 $Id: Nsca.pm,v 1.2 2001/12/01 22:17:27
+    piers Exp $
+

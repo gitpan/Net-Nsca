@@ -1,0 +1,12 @@
+MANIFEST
+Makefile.PL
+README
+LICENSE
+GPL
+send_nsca.pl
+lib/Net/Nsca.pm
+t/01readconfig.t
+t/02localmessage.t
+t/03general.t
+t/testconfig.cfg
+
